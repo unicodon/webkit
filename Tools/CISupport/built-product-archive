@@ -228,6 +228,18 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
 
         # Save WinCairoRequirements version for test bot use
         if platform == 'wincairo':
+            libDirectory = os.path.join(_configurationBuildDirectory, 'lib64')
+            thinLibDirectory = os.path.join(thinDirectory, 'lib64')
+            copyBuildFiles(libDirectory, thinLibDirectory, [])
+
+            webkitIncludeDirectory = os.path.join(_configurationBuildDirectory, 'WebKit', 'Headers', 'WebKit')
+            thinWebKitIncludeDirectory = os.path.join(thinDirectory, 'include', 'WebKit')
+            copyBuildFiles(webkitIncludeDirectory, thinWebKitIncludeDirectory, [])
+
+            webkitLegacyIncludeDirectory = os.path.join(_configurationBuildDirectory, 'WebKitLegacy', 'Headers', 'WebKitLegacy')
+            thinWebKitLegacyIncludeDirectory = os.path.join(thinDirectory, 'include', 'WebKitLegacy')
+            copyBuildFiles(webkitLegacyIncludeDirectory, thinWebKitLegacyIncludeDirectory, [])
+
             shutil.copy(
                 os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WebKitRequirementsWin64.zip.version'),
                 os.path.join(thinDirectory, 'WebKitRequirementsWin64.zip.config'))
@@ -235,7 +247,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         if createZip(thinDirectory, configuration):
             return 1
 
-        shutil.rmtree(thinDirectory)
+#        shutil.rmtree(thinDirectory)
 
     elif platform in ('gtk', 'jsc', 'wpe'):
         # On GTK+/WPE/JSC we don't need the intermediate step of creating a thinDirectory

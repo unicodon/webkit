@@ -63,7 +63,8 @@ typedef void *EGLNativeWindowType;
 typedef HDC     EGLNativeDisplayType;
 typedef HBITMAP EGLNativePixmapType;
 
-#if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP) /* Windows Desktop */
+//#if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP) /* Windows Desktop */
+#if 0 // FIXME:unicodon
 typedef HWND    EGLNativeWindowType;
 #else /* Windows Store */
 #include <inspectable.h>

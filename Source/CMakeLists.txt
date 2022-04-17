@@ -5,17 +5,21 @@ if (NOT USE_SYSTEM_MALLOC)
     add_subdirectory(bmalloc)
 endif ()
 
-add_subdirectory(WTF)
+#add_subdirectory(WTF)
 
 if (USE_CAPSTONE)
     add_subdirectory(ThirdParty/capstone)
 endif ()
 
-add_subdirectory(JavaScriptCore)
+#add_subdirectory(JavaScriptCore)
 
+
+add_subdirectory(ThirdParty/winrt)
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)
 endif ()
+
+if (FALSE)
 
 if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
@@ -49,5 +53,7 @@ endif ()
 if (ENABLE_WEBDRIVER)
     add_subdirectory(WebDriver)
 endif ()
+
+endif()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

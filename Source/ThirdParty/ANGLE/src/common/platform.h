@@ -50,6 +50,8 @@
 #    if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
 #        define ANGLE_ENABLE_WINDOWS_UWP 1
 #    endif
+// FIXME:unicodon
+#        define ANGLE_ENABLE_WINDOWS_UWP 1
 
 #    if defined(ANGLE_ENABLE_D3D9)
 #        include <d3d9.h>

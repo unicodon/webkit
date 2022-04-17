@@ -10,6 +10,11 @@
 
 #include "common/debug.h"
 
+// FIXME:unicodon
+#ifdef ANGLE_ENABLE_WINDOWS_UWP
+#    undef ANGLE_ENABLE_WINDOWS_UWP
+#endif
+
 #ifdef ANGLE_ENABLE_WINDOWS_UWP
 #    include <map>
 #    include <mutex>

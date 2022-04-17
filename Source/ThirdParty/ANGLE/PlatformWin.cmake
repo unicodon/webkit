@@ -26,9 +26,11 @@ list(APPEND ANGLE_DEFINITIONS
 list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi)
 
 # DirectX 9 support should be optional but ANGLE will not compile without it
+if (NOT angle_is_winui3)
 list(APPEND ANGLE_SOURCES ${_d3d9_backend_sources})
 list(APPEND ANGLE_DEFINITIONS ANGLE_ENABLE_D3D9)
 list(APPEND ANGLEGLESv2_LIBRARIES d3d9)
+endif ()
 
 # Use shared libraries
 set(GLESv2_LIBRARY_TYPE SHARED)

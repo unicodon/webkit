@@ -66,6 +66,8 @@
 
 #ifdef ANGLE_ENABLE_WINDOWS_UWP
 #    include "libANGLE/renderer/d3d/d3d11/winrt/NativeWindow11WinRT.h"
+#elif defined(ANGLE_ENABLE_WINDOWS_WINUI3)
+#    include "libANGLE/renderer/d3d/d3d11/winui3/NativeWindow11WinUI3.h"
 #else
 #    include "libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.h"
 #endif
@@ -548,7 +550,7 @@ egl::Error Renderer11::initialize()
 
     ANGLE_TRY(initializeD3DDevice());
 
-#if !defined(ANGLE_ENABLE_WINDOWS_UWP)
+#if !defined(ANGLE_ENABLE_WINDOWS_UWP) && !defined(ANGLE_ENABLE_WINDOWS_WINUI3)
 #    if !ANGLE_SKIP_DXGI_1_2_CHECK
     {
         ANGLE_TRACE_EVENT0("gpu.angle", "Renderer11::initialize (DXGICheck)");
@@ -1400,6 +1402,11 @@ bool Renderer11::isValidNativeWindow(EGLNativeWindowType window) const
     {
         return true;
     }
+#elif defined(ANGLE_ENABLE_WINDOWS_WINUI3)
+    if (NativeWindow11WinUI3::IsValidNativeWindow(window))
+    {
+        return true;
+    }
 #else
     if (NativeWindow11Win32::IsValidNativeWindow(window))
     {
@@ -1427,6 +1434,11 @@ NativeWindowD3D *Renderer11::createNativeWindow(EGLNativeWindowType window,
     if (window == nullptr || NativeWindow11WinRT::IsValidNativeWindow(window))
     {
         return new NativeWindow11WinRT(window, config->alphaSize > 0);
+    }
+#elif defined(ANGLE_ENABLE_WINDOWS_WINUI3)
+    if (window == nullptr || NativeWindow11WinUI3::IsValidNativeWindow(window))
+    {
+        return new NativeWindow11WinUI3(window, config->alphaSize > 0);
     }
 #else
     if (window == nullptr || NativeWindow11Win32::IsValidNativeWindow(window))

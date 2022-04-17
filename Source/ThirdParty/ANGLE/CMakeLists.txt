@@ -2,6 +2,12 @@ set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")
 
 if (APPLE)
     set(is_mac TRUE)
+elseif (USE_WINUI3)
+    set(is_win TRUE)
+    set(angle_enable_d3d9 FALSE)
+    set(angle_enable_d3d11 TRUE)
+    set(angle_is_winuwp FALSE)
+    set(angle_is_winui3 TRUE)
 elseif (WIN32)
     set(is_win TRUE)
     set(angle_enable_d3d9 TRUE)
@@ -143,7 +149,9 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
     )
     target_compile_definitions(ANGLE PUBLIC ${ANGLE_DEFINITIONS})
     target_link_libraries(ANGLE PRIVATE ZLIB::ZLIB)
-
+    if (angle_is_winui3)
+        target_link_libraries(ANGLE PRIVATE WindowsAppSDK)
+    endif ()
     target_compile_definitions(ANGLEFramework INTERFACE ${gl_prototypes})
 
     add_library(GLESv2 ${GLESv2_LIBRARY_TYPE}

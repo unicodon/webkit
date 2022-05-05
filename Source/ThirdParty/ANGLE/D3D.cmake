@@ -273,6 +273,15 @@ if(angle_enable_d3d11)
             "src/libANGLE/renderer/d3d/d3d11/winrt/SwapChainPanelNativeWindow.cpp"
             "src/libANGLE/renderer/d3d/d3d11/winrt/SwapChainPanelNativeWindow.h"
         )
+  elseif(angle_is_winui3)
+        list(APPEND _d3d11_backend_sources
+            "src/libANGLE/renderer/d3d/d3d11/winui3/InspectableNativeWindow.cpp"
+            "src/libANGLE/renderer/d3d/d3d11/winui3/InspectableNativeWindow.h"
+            "src/libANGLE/renderer/d3d/d3d11/winui3/NativeWindow11WinUI3.cpp"
+            "src/libANGLE/renderer/d3d/d3d11/winui3/NativeWindow11WinUI3.h"
+            "src/libANGLE/renderer/d3d/d3d11/winui3/SwapChainPanelNativeWindow.cpp"
+            "src/libANGLE/renderer/d3d/d3d11/winui3/SwapChainPanelNativeWindow.h"
+        )
     else()
         list(APPEND _d3d11_backend_sources
             "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp"

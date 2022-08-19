@@ -29,51 +29,25 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoKeyAES.h"
-#include "OpenSSLCryptoUniquePtr.h"
-#include <openssl/evp.h>
+#include <openssl/aes.h>
 
 namespace WebCore {
 
-static const EVP_CIPHER* aesAlgorithm(size_t keySize)
-{
-    if (keySize * 8 == 128)
-        return EVP_aes_128_wrap();
-
-    if (keySize * 8 == 192)
-        return EVP_aes_192_wrap();
-
-    if (keySize * 8 == 256)
-        return EVP_aes_256_wrap();
-
-    return nullptr;
-}
-
 static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
-    if (!algorithm)
+    size_t keySize = key.size() * 8;
+    if (keySize != 128 && keySize != 192 && keySize != 256)
         return std::nullopt;
 
-    EvpCipherCtxPtr ctx;
+    if (data.size() % 8)
+        return std::nullopt;
+
+    AES_KEY aesKey;
+    if (AES_set_encrypt_key(key.data(), keySize, &aesKey) < 0)
+        return std::nullopt;
+
     Vector<uint8_t> cipherText(data.size() + 8);
-    int len;
-
-    // Create and initialize the context
-    if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
-        return std::nullopt;
-
-    EVP_CIPHER_CTX_set_flags(ctx.get(), EVP_CIPHER_CTX_FLAG_WRAP_ALLOW);
-
-    // Initialize the encryption operation
-    if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), nullptr))
-        return std::nullopt;
-
-    // Provide the message to be encrypted, and obtain the encrypted output
-    if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.data(), &len, data.data(), data.size()))
-        return std::nullopt;
-
-    // Finalize the encryption. Further ciphertext bytes may be written at this stage
-    if (1 != EVP_EncryptFinal_ex(ctx.get(), cipherText.data() + len, &len))
+    if (AES_wrap_key(&aesKey, nullptr, cipherText.data(), data.data(), data.size()) < 0)
         return std::nullopt;
 
     return cipherText;
@@ -81,36 +55,20 @@ static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, c
 
 static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
-    if (!algorithm)
+    size_t keySize = key.size() * 8;
+    if (keySize != 128 && keySize != 192 && keySize != 256)
         return std::nullopt;
 
-    EvpCipherCtxPtr ctx;
-    Vector<uint8_t> plainText(data.size());
-    int len;
-    int plainTextLen;
-
-    // Create and initialize the context
-    if (!(ctx = EvpCipherCtxPtr(EVP_CIPHER_CTX_new())))
+    if (data.size() % 8 || !data.size())
         return std::nullopt;
 
-    EVP_CIPHER_CTX_set_flags(ctx.get(), EVP_CIPHER_CTX_FLAG_WRAP_ALLOW);
-
-    // Initialize the decryption operation
-    if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, key.data(), nullptr))
+    AES_KEY aesKey;
+    if (AES_set_decrypt_key(key.data(), keySize, &aesKey) < 0)
         return std::nullopt;
 
-    // Provide the message to be decrypted, and obtain the plaintext output
-    if (1 != EVP_DecryptUpdate(ctx.get(), plainText.data(), &len, data.data(), data.size()))
+    Vector<uint8_t> plainText(data.size() - 8);
+    if (AES_unwrap_key(&aesKey, nullptr, plainText.data(), data.data(), data.size()) < 0)
         return std::nullopt;
-    plainTextLen = len;
-
-    // Finalize the decryption. Further plaintext bytes may be written at this stage
-    if (1 != EVP_DecryptFinal_ex(ctx.get(), plainText.data() + len, &len))
-        return std::nullopt;
-    plainTextLen += len;
-
-    plainText.shrink(plainTextLen);
 
     return plainText;
 }

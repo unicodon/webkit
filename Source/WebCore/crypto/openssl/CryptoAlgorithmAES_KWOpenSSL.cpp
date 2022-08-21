@@ -29,25 +29,21 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "CryptoKeyAES.h"
-#include <openssl/aes.h>
+#include "OpenSSLUtilities.h"
 
 namespace WebCore {
 
 static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    size_t keySize = key.size() * 8;
-    if (keySize != 128 && keySize != 192 && keySize != 256)
-        return std::nullopt;
-
     if (data.size() % 8)
         return std::nullopt;
 
-    AES_KEY aesKey;
-    if (AES_set_encrypt_key(key.data(), keySize, &aesKey) < 0)
+    AESKey aesKey;
+    if (!aesKey.setKey(key, AES_ENCRYPT))
         return std::nullopt;
 
     Vector<uint8_t> cipherText(data.size() + 8);
-    if (AES_wrap_key(&aesKey, nullptr, cipherText.data(), data.data(), data.size()) < 0)
+    if (AES_wrap_key(aesKey.key(), nullptr, cipherText.data(), data.data(), data.size()) < 0)
         return std::nullopt;
 
     return cipherText;
@@ -55,19 +51,15 @@ static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, c
 
 static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
-    size_t keySize = key.size() * 8;
-    if (keySize != 128 && keySize != 192 && keySize != 256)
-        return std::nullopt;
-
     if (data.size() % 8 || !data.size())
         return std::nullopt;
 
-    AES_KEY aesKey;
-    if (AES_set_decrypt_key(key.data(), keySize, &aesKey) < 0)
+    AESKey aesKey;
+    if (!aesKey.setKey(key, AES_DECRYPT))
         return std::nullopt;
 
     Vector<uint8_t> plainText(data.size() - 8);
-    if (AES_unwrap_key(&aesKey, nullptr, plainText.data(), data.data(), data.size()) < 0)
+    if (AES_unwrap_key(aesKey.key(), nullptr, plainText.data(), data.data(), data.size()) < 0)
         return std::nullopt;
 
     return plainText;

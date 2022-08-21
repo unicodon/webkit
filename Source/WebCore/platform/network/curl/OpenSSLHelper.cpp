@@ -119,17 +119,17 @@ public:
 
     std::optional<Vector<uint8_t>> getDataAsVector() const
     {
-        uint8_t* data { nullptr };
+        char* data { nullptr };
         auto length = ::BIO_get_mem_data(m_bio, &data);
         if (length < 0)
             return std::nullopt;
 
-        return Vector { data, static_cast<size_t>(length) };
+        return Vector { reinterpret_cast<uint8_t*>(data), static_cast<size_t>(length) };
     }
 
     String getDataAsString() const
     {
-        uint8_t* data { nullptr };
+        char* data { nullptr };
         auto length = ::BIO_get_mem_data(m_bio, &data);
         if (length < 0)
             return String();

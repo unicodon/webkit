@@ -55,7 +55,7 @@ public:
 
     bool setKey(const Vector<uint8_t>& key, int enc /* AES_ENCRYPT or AES_DECRYPT */);
 
-    const AES_KEY* key() const { return &m_key; }
+    AES_KEY* key() { return &m_key; }
 private:
     AES_KEY m_key;
 };

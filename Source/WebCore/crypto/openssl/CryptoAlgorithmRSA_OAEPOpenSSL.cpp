@@ -31,7 +31,9 @@
 #include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoKeyRSA.h"
 #include "OpenSSLUtilities.h"
+#if __has_include(<openssl/mem.h>)
 #include <openssl/mem.h>
+#endif
 
 namespace WebCore {
 

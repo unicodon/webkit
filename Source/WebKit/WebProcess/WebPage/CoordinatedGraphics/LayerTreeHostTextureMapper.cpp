@@ -275,10 +275,17 @@ RefPtr<WebCore::DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonito
     return nullptr;
 }
 
+#if USE(WINUI3)
+::IInspectable* LayerTreeHost::window()
+{
+    return reinterpret_cast<::IInspectable*>(m_webPage.nativeWindowHandle());
+}
+#else
 HWND LayerTreeHost::window()
 {
     return reinterpret_cast<HWND>(m_webPage.nativeWindowHandle());
 }
+#endif
 
 bool LayerTreeHost::enabled()
 {

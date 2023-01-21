@@ -316,6 +316,10 @@ macro(WEBKIT_FRAMEWORK _target)
         set_target_properties(${_target} PROPERTIES FRAMEWORK TRUE)
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
     endif ()
+
+    if (USE_WINUI3)
+        target_link_libraries(${_target} PRIVATE WindowsAppSDK)
+    endif ()
 endmacro()
 
 # FIXME Move into WEBKIT_FRAMEWORK after all libraries are using this macro

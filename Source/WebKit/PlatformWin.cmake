@@ -135,6 +135,32 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/win"
 )
 
+if (USE_WINUI3)
+    list(REMOVE_ITEM WebKit_SOURCES
+        UIProcess/win/PageClientImpl.cpp
+        UIProcess/win/WebContextMenuProxyWin.cpp
+        UIProcess/win/WebPageProxyWin.cpp
+        UIProcess/win/WebPopupMenuProxyWin.cpp
+        UIProcess/win/WebProcessPoolWin.cpp
+        UIProcess/win/WebView.cpp
+    )
+    list(APPEND WebKit_SOURCES
+        UIProcess/winui3/PageClientImpl.cpp
+        UIProcess/winui3/WebContextMenuProxyWin.cpp
+        UIProcess/winui3/WebPageProxyWin.cpp
+        UIProcess/winui3/WebPopupMenuProxyWin.cpp
+        UIProcess/winui3/WebProcessPoolWin.cpp
+        UIProcess/winui3/WebView.cpp
+    )
+
+    list(REMOVE_ITEM WebKit_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/win"
+    )
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/winui3"
+    )
+endif ()
+
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost
 )

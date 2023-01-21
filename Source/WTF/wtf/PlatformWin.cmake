@@ -27,6 +27,16 @@ list(APPEND WTF_SOURCES
     win/ThreadingWin.cpp
 )
 
+if (USE_WINUI3)
+    list(REMOVE_ITEM WTF_SOURCES
+        win/RunLoopWin.cpp
+    )
+
+    list(APPEND WTF_SOURCES
+        win/RunLoopWin.cpp
+    )
+endif ()
+
 list(APPEND WTF_LIBRARIES
     DbgHelp
     shlwapi

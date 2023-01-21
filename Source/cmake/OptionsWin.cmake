@@ -7,6 +7,11 @@ add_definitions(-D_WINDOWS -DWINVER=0x601 -D_WIN32_WINNT=0x601)
 add_definitions(-DNOMINMAX)
 add_definitions(-DUNICODE -D_UNICODE)
 
+if (USE_WINUI3)
+    add_definitions(-DUSE_WINUI3=1)
+    set(ENABLE_WEBKIT_LEGACY OFF)
+endif ()
+
 if ((NOT DEFINED ENABLE_WEBKIT_LEGACY) OR ENABLE_WEBKIT_LEGACY)
     set(ENABLE_WEBKIT_LEGACY ON)
     set(ENABLE_WEBKIT OFF)

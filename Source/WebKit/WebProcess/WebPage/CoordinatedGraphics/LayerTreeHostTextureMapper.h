@@ -85,7 +85,11 @@ private:
     float deviceScaleFactor() const override;
 
     void initialize();
+#if USE(WINUI3)
+    ::IInspectable* window();
+#else
     HWND window();
+#endif
     bool enabled();
     void compositeLayersToContext();
     void flushAndRenderLayers();

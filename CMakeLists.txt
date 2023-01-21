@@ -35,7 +35,7 @@ add_subdirectory(Source)
 # Add tools
 # -----------------------------------------------------------------------------
 if (ENABLE_TOOLS)
-#    add_subdirectory(Tools)
+    add_subdirectory(Tools)
 endif ()
 
 if (DEVELOPER_MODE)
